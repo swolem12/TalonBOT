@@ -143,6 +143,103 @@ npm run start
 | `!topusers` | Most active users |
 | `!activity [days]` | Activity chart |
 
+## 🌐 Community Dashboard Integration
+
+TalonBOT can be integrated with the [Chat-Based Community Dashboard](https://github.com/swolem12/chat-based-community-dashboard) for enhanced community management features including:
+
+- **Member Management** - Create and manage user accounts from a web interface
+- **Cross-Platform Bridging** - Bridge Signal groups with Matrix rooms
+- **Automated Onboarding** - Send welcome messages and invitations
+- **Group Discovery** - Let users discover and request to join Signal groups
+
+### Setting Up Dashboard Integration
+
+1. **Clone and set up the community dashboard:**
+   ```bash
+   git clone https://github.com/swolem12/chat-based-community-dashboard.git
+   cd chat-based-community-dashboard/modern-stack
+   npm install
+   ```
+
+2. **Configure the dashboard environment** (`.env` in dashboard):
+   ```env
+   # Signal Bot Integration
+   SIGNAL_BOT_PHONE_NUMBER=+1234567890  # Same number as TalonBOT
+   
+   # Optional - AI Features
+   OPENAI_ACTIVE=true
+   OPENAI_API_KEY=sk-...
+   
+   # Optional - Matrix Integration
+   MATRIX_ACTIVE=true
+   MATRIX_HOMESERVER=https://matrix.example.com
+   MATRIX_ACCESS_TOKEN=your_token
+   MATRIX_USER_ID=@bot:example.com
+   ```
+
+3. **Configure TalonBOT** (`.env` in TalonBOT):
+   ```env
+   # Add dashboard webhook URL for notifications
+   DASHBOARD_WEBHOOK_URL=http://localhost:3000/api/signal-webhook
+   
+   # Enable dashboard integration features
+   DASHBOARD_INTEGRATION=true
+   ```
+
+4. **Start both services:**
+   ```bash
+   # Terminal 1 - Start TalonBOT
+   cd TalonBOT
+   npm run start
+   
+   # Terminal 2 - Start Dashboard
+   cd chat-based-community-dashboard/modern-stack
+   npm run dev
+   ```
+
+### Dashboard Features
+
+When integrated with the community dashboard, you gain access to:
+
+| Feature | Description |
+|---------|-------------|
+| **Web Interface** | Manage bot settings from a browser |
+| **User Accounts** | Create accounts linked to Signal identities |
+| **Matrix Bridging** | Connect Signal groups to Matrix rooms |
+| **Group Management** | Create, configure, and manage Signal groups |
+| **Analytics Dashboard** | View activity metrics in visual charts |
+| **Audit Logging** | Track all group-related actions |
+
+### API Integration
+
+The dashboard exposes API endpoints for bot control:
+
+```bash
+# Check bot status
+curl http://localhost:3000/api/signal-bot?action=status
+
+# Start bot
+curl -X POST http://localhost:3000/api/signal-bot \
+  -H "Content-Type: application/json" \
+  -d '{"action": "start"}'
+
+# Stop bot
+curl -X POST http://localhost:3000/api/signal-bot \
+  -H "Content-Type: application/json" \
+  -d '{"action": "stop"}'
+```
+
+### Signal Group Self-Service
+
+Users can discover and join Signal groups through the dashboard:
+
+1. Browse available public Signal groups
+2. Submit join requests with optional messages
+3. Track pending request status
+4. Admins can approve/deny requests from the dashboard
+
+For detailed dashboard setup instructions, see the [Community Dashboard README](https://github.com/swolem12/chat-based-community-dashboard).
+
 ## 🏠 Hosting Options
 
 ### Option 1: Run on Your Computer
@@ -169,6 +266,61 @@ docker-compose up -d
 - Works on any platform
 - Easy deployment
 - [Docker Setup Guide](docs/docker-setup.md)
+
+### Option 5: Render.com (Recommended for Cloud Hosting)
+
+Render.com provides easy cloud deployment with automatic builds and a free tier option.
+
+#### Quick Deploy to Render
+
+1. **Fork this repository** to your GitHub account
+
+2. **Create a new Background Worker** on Render:
+   - Go to [Render Dashboard](https://dashboard.render.com/)
+   - Click "New" → "Background Worker"
+   - Connect your GitHub repository
+   - Select "Docker" as the environment
+
+3. **Configure environment variables** in Render dashboard:
+   ```
+   SIGNAL_BOT_PHONE_NUMBER=+1234567890
+   ADMIN_USERS=+1234567890
+   SIGNAL_CLI_MODE=daemon
+   NODE_ENV=production
+   ```
+
+4. **Set up database** (choose one):
+   - **SQLite (simple)**: Add `DATABASE_URL=file:/data/db/talonbot.db` and enable a Render Disk mounted at `/data`
+   - **PostgreSQL (recommended for production)**: Create a Render PostgreSQL database and use its connection string
+
+5. **Deploy** - Render will automatically build and start your bot
+
+#### Using render.yaml (Blueprint)
+
+This repository includes a `render.yaml` file for one-click deployment:
+
+1. Fork this repository to your GitHub account
+2. Go to [Render Dashboard](https://dashboard.render.com/) → "New" → "Blueprint"
+3. Connect your forked repository
+4. Configure your environment variables
+5. Deploy!
+
+#### Important Notes for Render Deployment
+
+- **Signal-CLI Installation**: The Docker image includes signal-cli pre-installed
+- **Persistent Storage**: SQLite requires a Render Disk ($0.25/GB/month). For production, consider PostgreSQL
+- **Phone Registration**: You'll need to register the bot's phone number before deployment (see [Installing signal-cli](#-installing-signal-cli) section below)
+- **Background Worker**: Use a Background Worker (not Web Service) since this is a bot, not a web server
+
+#### Render Pricing
+
+| Plan | Cost | Features |
+|------|------|----------|
+| Free | $0 | 750 hours/month, spins down after inactivity |
+| Starter | $7/month | Always on, persistent disk |
+| Standard | $25/month | More resources, better performance |
+
+> **Note**: The free tier spins down after 15 minutes of inactivity. For a Signal bot that needs to respond 24/7, use a paid plan (Starter or higher recommended).
 
 ## 📁 Project Structure
 
