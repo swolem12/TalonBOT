@@ -1,0 +1,161 @@
+// Prisma schema for TalonBOT
+// Signal Chatbot for Team Talon
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Group members
+model Member {
+  id            String   @id @default(cuid())
+  phoneNumber   String   @unique
+  displayName   String?
+  role          String   @default("member") // admin, moderator, member
+  isActive      Boolean  @default(true)
+  isBanned      Boolean  @default(false)
+  isMuted       Boolean  @default(false)
+  muteExpiresAt DateTime?
+  joinedAt      DateTime @default(now())
+  lastSeenAt    DateTime @default(now())
+  
+  // Relationships
+  messages       Message[]
+  sentReports    Report[]  @relation("ReportCreator")
+  reportedIn     Report[]  @relation("ReportedMember")
+  
+  @@index([phoneNumber])
+  @@index([isActive])
+}
+
+// Signal messages stored for reporting and analysis
+model Message {
+  id           String    @id @default(cuid())
+  groupId      String?
+  groupName    String?
+  senderId     String
+  senderName   String?
+  content      String
+  timestamp    BigInt    // Signal timestamp
+  attachments  String?   // JSON array of attachment info
+  mentions     String?   // JSON array of mentions
+  isQuote      Boolean   @default(false)
+  quotedText   String?
+  createdAt    DateTime  @default(now())
+  
+  // Relationships
+  sender       Member    @relation(fields: [senderId], references: [phoneNumber])
+  reactions    Reaction[]
+  
+  @@index([groupId])
+  @@index([senderId])
+  @@index([timestamp])
+  @@index([createdAt])
+}
+
+// Message reactions
+model Reaction {
+  id            String   @id @default(cuid())
+  messageId     String
+  emoji         String
+  reactorNumber String
+  reactorName   String?
+  timestamp     BigInt
+  createdAt     DateTime @default(now())
+  
+  // Relationships
+  message       Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  
+  @@unique([messageId, emoji, reactorNumber])
+  @@index([messageId])
+}
+
+// Generated reports
+model Report {
+  id            String   @id @default(cuid())
+  reportType    String   // summary, user_activity, keyword, timeframe
+  groupId       String?
+  groupName     String?
+  creatorId     String?
+  targetUserId  String?
+  startDate     DateTime?
+  endDate       DateTime?
+  keywords      String?  // JSON array of keywords
+  content       String   // Generated report content
+  messageCount  Int      @default(0)
+  createdAt     DateTime @default(now())
+  
+  // Relationships
+  creator       Member?  @relation("ReportCreator", fields: [creatorId], references: [phoneNumber])
+  targetUser    Member?  @relation("ReportedMember", fields: [targetUserId], references: [phoneNumber])
+  
+  @@index([groupId])
+  @@index([reportType])
+  @@index([createdAt])
+}
+
+// Bot command usage tracking
+model CommandUsage {
+  id           String   @id @default(cuid())
+  command      String
+  args         String?
+  groupId      String?
+  groupName    String?
+  userId       String
+  userName     String?
+  success      Boolean  @default(true)
+  responseTime Int?     // milliseconds
+  errorMessage String?
+  timestamp    DateTime @default(now())
+  
+  @@index([command])
+  @@index([groupId])
+  @@index([userId])
+  @@index([timestamp])
+}
+
+// Bot settings
+model BotSettings {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   // JSON value
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+// Group configuration
+model GroupConfig {
+  id                String   @id @default(cuid())
+  groupId           String   @unique
+  groupName         String?
+  isMonitored       Boolean  @default(true)
+  welcomeMessage    String?
+  rulesMessage      String?
+  autoModEnabled    Boolean  @default(false)
+  bannedWords       String?  // JSON array
+  maxMessagesPerMin Int      @default(10)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @default(now()) @updatedAt
+  
+  @@index([groupId])
+}
+
+// Admin events logging
+model AdminEvent {
+  id        String   @id @default(cuid())
+  eventType String   // kick, ban, mute, unmute, promote, demote
+  adminId   String
+  adminName String?
+  targetId  String?
+  targetName String?
+  groupId   String?
+  details   String?
+  timestamp DateTime @default(now())
+  
+  @@index([eventType])
+  @@index([adminId])
+  @@index([timestamp])
+}
