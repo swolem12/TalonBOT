@@ -143,6 +143,103 @@ npm run start
 | `!topusers` | Most active users |
 | `!activity [days]` | Activity chart |
 
+## 🌐 Community Dashboard Integration
+
+TalonBOT can be integrated with the [Chat-Based Community Dashboard](https://github.com/swolem12/chat-based-community-dashboard) for enhanced community management features including:
+
+- **Member Management** - Create and manage user accounts from a web interface
+- **Cross-Platform Bridging** - Bridge Signal groups with Matrix rooms
+- **Automated Onboarding** - Send welcome messages and invitations
+- **Group Discovery** - Let users discover and request to join Signal groups
+
+### Setting Up Dashboard Integration
+
+1. **Clone and set up the community dashboard:**
+   ```bash
+   git clone https://github.com/swolem12/chat-based-community-dashboard.git
+   cd chat-based-community-dashboard/modern-stack
+   npm install
+   ```
+
+2. **Configure the dashboard environment** (`.env` in dashboard):
+   ```env
+   # Signal Bot Integration
+   SIGNAL_BOT_PHONE_NUMBER=+1234567890  # Same number as TalonBOT
+   
+   # Optional - AI Features
+   OPENAI_ACTIVE=true
+   OPENAI_API_KEY=sk-...
+   
+   # Optional - Matrix Integration
+   MATRIX_ACTIVE=true
+   MATRIX_HOMESERVER=https://matrix.example.com
+   MATRIX_ACCESS_TOKEN=your_token
+   MATRIX_USER_ID=@bot:example.com
+   ```
+
+3. **Configure TalonBOT** (`.env` in TalonBOT):
+   ```env
+   # Add dashboard webhook URL for notifications
+   DASHBOARD_WEBHOOK_URL=http://localhost:3000/api/signal-webhook
+   
+   # Enable dashboard integration features
+   DASHBOARD_INTEGRATION=true
+   ```
+
+4. **Start both services:**
+   ```bash
+   # Terminal 1 - Start TalonBOT
+   cd TalonBOT
+   npm run start
+   
+   # Terminal 2 - Start Dashboard
+   cd chat-based-community-dashboard/modern-stack
+   npm run dev
+   ```
+
+### Dashboard Features
+
+When integrated with the community dashboard, you gain access to:
+
+| Feature | Description |
+|---------|-------------|
+| **Web Interface** | Manage bot settings from a browser |
+| **User Accounts** | Create accounts linked to Signal identities |
+| **Matrix Bridging** | Connect Signal groups to Matrix rooms |
+| **Group Management** | Create, configure, and manage Signal groups |
+| **Analytics Dashboard** | View activity metrics in visual charts |
+| **Audit Logging** | Track all group-related actions |
+
+### API Integration
+
+The dashboard exposes API endpoints for bot control:
+
+```bash
+# Check bot status
+curl http://localhost:3000/api/signal-bot?action=status
+
+# Start bot
+curl -X POST http://localhost:3000/api/signal-bot \
+  -H "Content-Type: application/json" \
+  -d '{"action": "start"}'
+
+# Stop bot
+curl -X POST http://localhost:3000/api/signal-bot \
+  -H "Content-Type: application/json" \
+  -d '{"action": "stop"}'
+```
+
+### Signal Group Self-Service
+
+Users can discover and join Signal groups through the dashboard:
+
+1. Browse available public Signal groups
+2. Submit join requests with optional messages
+3. Track pending request status
+4. Admins can approve/deny requests from the dashboard
+
+For detailed dashboard setup instructions, see the [Community Dashboard README](https://github.com/swolem12/chat-based-community-dashboard).
+
 ## 🏠 Hosting Options
 
 ### Option 1: Run on Your Computer
