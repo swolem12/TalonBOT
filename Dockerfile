@@ -43,9 +43,9 @@ ENV SIGNAL_CLI_DATA_DIR=/data/signal-cli
 # Volume for persistent data
 VOLUME ["/data"]
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-  CMD node -e "console.log('healthy')" || exit 1
+# Health check - verify Node.js process is running and signal-cli is accessible
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD pgrep -f "node dist/index.js" > /dev/null && signal-cli --version > /dev/null || exit 1
 
 # Start the bot
 CMD ["node", "dist/index.js"]

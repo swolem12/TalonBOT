@@ -285,28 +285,31 @@ Render.com provides easy cloud deployment with automatic builds and a free tier 
    ```
    SIGNAL_BOT_PHONE_NUMBER=+1234567890
    ADMIN_USERS=+1234567890
-   DATABASE_URL=file:./talonbot.db
    SIGNAL_CLI_MODE=daemon
    NODE_ENV=production
    ```
 
-4. **Deploy** - Render will automatically build and start your bot
+4. **Set up database** (choose one):
+   - **SQLite (simple)**: Add `DATABASE_URL=file:/data/db/talonbot.db` and enable a Render Disk mounted at `/data`
+   - **PostgreSQL (recommended for production)**: Create a Render PostgreSQL database and use its connection string
+
+5. **Deploy** - Render will automatically build and start your bot
 
 #### Using render.yaml (Blueprint)
 
 This repository includes a `render.yaml` file for one-click deployment:
 
-1. Click the "Deploy to Render" button below
-2. Configure your environment variables
-3. Deploy!
-
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/swolem12/TalonBOT)
+1. Fork this repository to your GitHub account
+2. Go to [Render Dashboard](https://dashboard.render.com/) → "New" → "Blueprint"
+3. Connect your forked repository
+4. Configure your environment variables
+5. Deploy!
 
 #### Important Notes for Render Deployment
 
 - **Signal-CLI Installation**: The Docker image includes signal-cli pre-installed
-- **Persistent Storage**: For production, use a PostgreSQL database instead of SQLite
-- **Phone Registration**: You'll need to register the bot's phone number before deployment
+- **Persistent Storage**: SQLite requires a Render Disk ($0.25/GB/month). For production, consider PostgreSQL
+- **Phone Registration**: You'll need to register the bot's phone number before deployment (see [Installing signal-cli](#-installing-signal-cli))
 - **Background Worker**: Use a Background Worker (not Web Service) since this is a bot, not a web server
 
 #### Render Pricing
@@ -317,7 +320,7 @@ This repository includes a `render.yaml` file for one-click deployment:
 | Starter | $7/month | Always on, persistent disk |
 | Standard | $25/month | More resources, better performance |
 
-> **Note**: The free tier spins down after 15 minutes of inactivity. For a bot that needs to respond 24/7, use a paid plan or set up a keep-alive ping.
+> **Note**: The free tier spins down after 15 minutes of inactivity. For a Signal bot that needs to respond 24/7, use a paid plan (Starter or higher recommended).
 
 ## 📁 Project Structure
 
