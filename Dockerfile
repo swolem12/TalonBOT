@@ -1,7 +1,7 @@
 FROM node:20-alpine
 
-# Install Java for signal-cli and other dependencies
-RUN apk add --no-cache openjdk17-jre wget bash curl
+# Install Java for signal-cli and process utilities
+RUN apk add --no-cache openjdk17-jre wget bash procps
 
 # Install signal-cli
 ENV SIGNAL_CLI_VERSION=0.13.2

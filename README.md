@@ -309,7 +309,7 @@ This repository includes a `render.yaml` file for one-click deployment:
 
 - **Signal-CLI Installation**: The Docker image includes signal-cli pre-installed
 - **Persistent Storage**: SQLite requires a Render Disk ($0.25/GB/month). For production, consider PostgreSQL
-- **Phone Registration**: You'll need to register the bot's phone number before deployment (see [Installing signal-cli](#-installing-signal-cli))
+- **Phone Registration**: You'll need to register the bot's phone number before deployment (see [Installing signal-cli](#-installing-signal-cli) section below)
 - **Background Worker**: Use a Background Worker (not Web Service) since this is a bot, not a web server
 
 #### Render Pricing
