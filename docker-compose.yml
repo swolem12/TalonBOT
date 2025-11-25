@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  talonbot:
+    build: .
+    container_name: talonbot
+    restart: unless-stopped
+    volumes:
+      - talonbot-data:/data
+      - signal-data:/data/signal-cli
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:/data/db/talonbot.db
+      - SIGNAL_CLI_DATA_DIR=/data/signal-cli
+      - SIGNAL_BOT_PHONE_NUMBER=${SIGNAL_BOT_PHONE_NUMBER:-}
+      - ADMIN_USERS=${ADMIN_USERS:-}
+      - BOT_PREFIX=${BOT_PREFIX:-!}
+      - STORE_MESSAGES=${STORE_MESSAGES:-true}
+      - DEBUG=${DEBUG:-false}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    networks:
+      - talonbot-network
+
+volumes:
+  talonbot-data:
+    driver: local
+  signal-data:
+    driver: local
+
+networks:
+  talonbot-network:
+    driver: bridge
+
+# Usage:
+# 1. Create .env file with your settings
+# 2. Register Signal number first:
+#    docker-compose run --rm talonbot signal-cli -a +1234567890 register
+#    docker-compose run --rm talonbot signal-cli -a +1234567890 verify 123456
+# 3. Start: docker-compose up -d
+# 4. Logs: docker-compose logs -f
+# 5. Stop: docker-compose down

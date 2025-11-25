@@ -58,6 +58,14 @@ class HelpCommand extends BaseCommand {
 • \`!mod remove +1234567890\`
 • \`!mod list\`
 
+📰 **Briefings & FOMO Prevention**
+• \`!brief [time]\` - Quick briefing (e.g., !brief 6h)
+• \`!catchup\` - Smart catch-up on what you missed
+• \`!digest daily|weekly\` - Comprehensive digest
+• \`!highlights [time]\` - Key highlights
+• \`!topics [time]\` - Discussion topics
+• \`!timeline [hours]\` - Visual activity timeline
+
 📊 **Reports**
 • \`!report [days]\` - Activity report
 • \`!summary [hours]\` - Chat summary

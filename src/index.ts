@@ -16,6 +16,7 @@ import CorePlugin from './plugins/core';
 import MembersPlugin from './plugins/members';
 import ReportsPlugin from './plugins/reports';
 import AnalyticsPlugin from './plugins/analytics';
+import BriefingPlugin from './plugins/briefing';
 
 class TalonBotService implements TalonBot {
   config: BotConfig;
@@ -96,6 +97,7 @@ class TalonBotService implements TalonBot {
       MembersPlugin,
       ReportsPlugin,
       AnalyticsPlugin,
+      BriefingPlugin,
     ];
 
     for (const PluginClass of pluginClasses) {
