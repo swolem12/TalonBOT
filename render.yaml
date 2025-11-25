@@ -1,0 +1,50 @@
+# Render.com Blueprint Configuration
+# See: https://render.com/docs/blueprint-spec
+
+services:
+  # TalonBOT - Signal Chatbot Background Worker
+  - type: worker
+    name: talonbot
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    region: oregon # or frankfurt, singapore, ohio
+    plan: starter # free, starter, standard, or pro
+    autoDeploy: true
+    envVars:
+      # Required Settings
+      - key: SIGNAL_BOT_PHONE_NUMBER
+        sync: false # Set this in Render dashboard
+      - key: DATABASE_URL
+        sync: false # Set this in Render dashboard or use managed database
+      
+      # Admin Configuration
+      - key: ADMIN_USERS
+        sync: false
+      - key: MASTER_ADMIN
+        sync: false
+      
+      # Signal-CLI Configuration
+      - key: SIGNAL_CLI_MODE
+        value: daemon
+      
+      # Bot Behavior
+      - key: BOT_PREFIX
+        value: "!"
+      - key: STORE_MESSAGES
+        value: "true"
+      - key: MAX_MESSAGES_PER_MINUTE
+        value: "10"
+      
+      # Environment
+      - key: NODE_ENV
+        value: production
+      - key: LOG_LEVEL
+        value: info
+
+# Optional: Managed PostgreSQL Database
+# Uncomment if you want to use a managed database instead of SQLite
+# databases:
+#   - name: talonbot-db
+#     databaseName: talonbot
+#     user: talonbot
+#     plan: free # free, starter, standard, or pro

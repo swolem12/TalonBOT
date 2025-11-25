@@ -267,6 +267,58 @@ docker-compose up -d
 - Easy deployment
 - [Docker Setup Guide](docs/docker-setup.md)
 
+### Option 5: Render.com (Recommended for Cloud Hosting)
+
+Render.com provides easy cloud deployment with automatic builds and a free tier option.
+
+#### Quick Deploy to Render
+
+1. **Fork this repository** to your GitHub account
+
+2. **Create a new Background Worker** on Render:
+   - Go to [Render Dashboard](https://dashboard.render.com/)
+   - Click "New" → "Background Worker"
+   - Connect your GitHub repository
+   - Select "Docker" as the environment
+
+3. **Configure environment variables** in Render dashboard:
+   ```
+   SIGNAL_BOT_PHONE_NUMBER=+1234567890
+   ADMIN_USERS=+1234567890
+   DATABASE_URL=file:./talonbot.db
+   SIGNAL_CLI_MODE=daemon
+   NODE_ENV=production
+   ```
+
+4. **Deploy** - Render will automatically build and start your bot
+
+#### Using render.yaml (Blueprint)
+
+This repository includes a `render.yaml` file for one-click deployment:
+
+1. Click the "Deploy to Render" button below
+2. Configure your environment variables
+3. Deploy!
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/swolem12/TalonBOT)
+
+#### Important Notes for Render Deployment
+
+- **Signal-CLI Installation**: The Docker image includes signal-cli pre-installed
+- **Persistent Storage**: For production, use a PostgreSQL database instead of SQLite
+- **Phone Registration**: You'll need to register the bot's phone number before deployment
+- **Background Worker**: Use a Background Worker (not Web Service) since this is a bot, not a web server
+
+#### Render Pricing
+
+| Plan | Cost | Features |
+|------|------|----------|
+| Free | $0 | 750 hours/month, spins down after inactivity |
+| Starter | $7/month | Always on, persistent disk |
+| Standard | $25/month | More resources, better performance |
+
+> **Note**: The free tier spins down after 15 minutes of inactivity. For a bot that needs to respond 24/7, use a paid plan or set up a keep-alive ping.
+
 ## 📁 Project Structure
 
 ```
